@@ -1,0 +1,31 @@
+<conf>
+	<application>
+		<path s="./meta/mongod.yml" />
+		<executable s="./mongod" />
+		<terminal b="true" />
+	</application>
+	<database>
+		<systemLog>
+			<destination v="file" />
+			<logAppend v="true" />
+			<path v="./logs/database.log" />
+		</systemLog>
+		<storage>
+			<dbPath v="./storage/" />
+			<journal>
+				<enabled v="true" />
+			</journal>
+		</storage>
+		<processManagement>
+			<pidFilePath v="./logs/thread.pid" />
+			<timeZoneInfo v="./time/" />
+		</processManagement>
+		<net>
+			<bindIp v="127.0.0.1" />
+			<port v="27017" />
+		</net>
+		<security>
+			<authorization v="enabled" />
+		</security>
+	</database>
+</conf>

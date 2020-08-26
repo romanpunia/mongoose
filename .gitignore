@@ -1,0 +1,13 @@
+.idea/
+.git/
+debug/
+release/
+bin/*.dll
+bin/*.lib
+bin/*.pdb
+bin/*.exe
+bin/*.ilk
+bin/mongodb/logs/*.log
+bin/mongodb/logs/*.pid
+bin/mongodb/meta/*.yml
+bin/mongodb/storage

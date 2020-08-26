@@ -1,0 +1,253 @@
+﻿#include <tomahawk/tomahawk.h>
+#include <csignal>
+
+using namespace Tomahawk::Rest;
+using namespace Tomahawk::Audio;
+using namespace Tomahawk::Compute;
+using namespace Tomahawk::Engine;
+using namespace Tomahawk::Network;
+using namespace Tomahawk::Graphics;
+using namespace Tomahawk::Script;
+
+class Runtime : public Application
+{
+public:
+	FileLogger* Stream = nullptr;
+    Console* Log = nullptr;
+    ChildProcess Process;
+    std::string Filename;
+    std::string Logs;
+    bool Terminal;
+    
+public:
+	explicit Runtime(Application::Desc* Conf) : Application(Conf)
+	{
+	}
+	~Runtime() override
+	{
+		delete Stream;
+		delete Log;
+        OS::FreeProcess(&Process);
+    }
+	void Initialize(Application::Desc* In) override
+	{
+	    THAWK_INFO("preparing for initialization");
+        Content->SetEnvironment(OS::GetDirectory() + "mongodb");
+
+        THAWK_INFO("loading for ./mongodb/conf.xml");
+        auto Reference = Content->Load<Document>("conf.xml", nullptr);
+        if (!Reference)
+        {
+            THAWK_ERROR("couldn't load ./mongodb/conf.xml (abort)");
+            return Restate(ApplicationState_Terminated);
+        }
+
+        std::string N = Socket::LocalIpAddress();
+        std::string D = Content->GetEnvironment();
+		ProcessNode(Reference, N, D);
+
+		NMake::Unpack(Reference->FindPath("application.terminal"), &Terminal);
+        if (Terminal)
+        {
+            Log = Console::Get();
+            Log->Show();
+        }
+        else
+            delete Log;
+
+		Document* SystemLog = Reference->FindPath("database.systemLog.path.[v]");
+		if (SystemLog != nullptr)
+		{
+			Logs = SystemLog->String;
+			if (!Logs.empty())
+				THAWK_INFO("system logs at %s", Logs.c_str());
+		}
+
+		NMake::Unpack(Reference->FindPath("application.path"), &Filename);
+        if (!Filename.empty())
+        {
+            THAWK_INFO("loading MongoDB config at %s", Filename.c_str());
+
+            auto StreamF = new FileStream();
+			if (StreamF->Open(Filename.c_str(), FileMode_Binary_Write_Only))
+			{
+				std::string Tab; Document* Config = Reference->Find("database", true);
+				if (Config != nullptr)
+				{
+					for (auto It = Config->GetNodes()->begin(); It < Config->GetNodes()->end(); It++)
+						ProcessYaml(*It, StreamF, Tab);
+				}
+			}
+
+            delete StreamF;
+            THAWK_INFO("MongoDB system config was saved");
+        }
+
+		std::string Path;
+		NMake::Unpack(Reference->FindPath("application.executable"), &Path);
+        if (!Path.empty())
+        {
+            std::vector<std::string> Args;
+            Args.emplace_back("--config");
+            Args.push_back(std::string("\"").append(Filename).append(1, '\"'));
+
+            THAWK_INFO("spawning MongoDB process from %s", Path.c_str());
+            if (!OS::SpawnProcess(Path, Args, &Process))
+            {
+                THAWK_ERROR("MongoDB process cannot be spawned for some reason");
+				delete Reference;
+                return Restate(ApplicationState_Terminated);
+            }
+        }
+
+		delete Reference;
+		signal(SIGABRT, OnAbort);
+		signal(SIGFPE, OnArithmeticError);
+		signal(SIGILL, OnIllegalOperation);
+		signal(SIGINT, OnCtrl);
+		signal(SIGSEGV, OnInvalidAccess);
+		signal(SIGTERM, OnTerminate);
+#ifdef PLATFORM_UNIX
+		signal(SIGPIPE, SIG_IGN);
+#endif
+        THAWK_INFO("initialization done");
+		if (Terminal && !Logs.empty())
+		{
+            Stream = new FileLogger(Logs);
+            Stream->Process(Runtime::OnLogWrite);
+		}
+	}
+	void Update(Timer* Time) override
+	{
+		Time->FrameLimit = 6;
+		if (Log && Stream != nullptr)
+            Stream->Process(Runtime::OnLogWrite);
+	}
+
+public:
+	static bool CanTerminate()
+	{
+		static std::mutex Mutex;
+		static bool Termination = false;
+
+		Mutex.lock();
+		bool Value = !Termination;
+		Termination = true;
+		Mutex.unlock();
+
+		return Value;
+	}
+    static bool ProcessYaml(Document* Document, FileStream* Stream, std::string& Tab)
+    {
+        if (!Document || Document->Name.empty())
+            return false;
+
+        ::Document* Value = Document->Find("[v]", true);
+        if (Document->GetNodes()->empty() && !Value)
+            return false;
+
+        Stream->Write((Tab + Document->Name).c_str(), Document->Name.size() + Tab.size());
+        Stream->Write(":", 1);
+
+		if ((int)Document->GetNodes()->size() - (Value ? 1 : 0) > 0)
+        {
+            Tab.append("  ");
+            Stream->Write("\n", 1);
+
+            for (auto It = Document->GetNodes()->begin(); It < Document->GetNodes()->end(); It++)
+				ProcessYaml(*It, Stream, Tab);
+
+            Tab = Tab.substr(0, Tab.size() - 2);
+        }
+		else if (Value)
+		{
+			std::string V = Value->Serialize();
+			Stream->Write((" " + V).c_str(), V.size() + 1);
+			Stream->Write("\n", 1);
+		}
+
+        return true;
+    }
+	static void ProcessNode(Document* Value, const std::string& N, const std::string& D)
+	{
+		if (Value != nullptr)
+		{
+			Stroke(&Value->String).Path(N, D);
+			for (auto& It : *Value->GetNodes())
+				ProcessNode(It, N, D);
+		}
+	}
+	static void OnAbort(int Value)
+	{
+		signal(SIGABRT, OnAbort);
+		if (CanTerminate())
+			Application::Get()->As<Runtime>()->Restate(ApplicationState_Terminated);
+	}
+	static void OnArithmeticError(int Value)
+	{
+		signal(SIGFPE, OnArithmeticError);
+		if (CanTerminate())
+			Application::Get()->As<Runtime>()->Restate(ApplicationState_Terminated);
+	}
+	static void OnIllegalOperation(int Value)
+	{
+		signal(SIGILL, OnIllegalOperation);
+		if (CanTerminate())
+			Application::Get()->As<Runtime>()->Restate(ApplicationState_Terminated);
+	}
+	static void OnCtrl(int Value)
+	{
+		signal(SIGINT, OnCtrl);
+		if (CanTerminate())
+			Application::Get()->As<Runtime>()->Restate(ApplicationState_Terminated);
+	}
+	static void OnInvalidAccess(int Value)
+	{
+		signal(SIGSEGV, OnInvalidAccess);
+		if (CanTerminate())
+			Application::Get()->As<Runtime>()->Restate(ApplicationState_Terminated);
+	}
+	static void OnTerminate(int Value)
+	{
+		signal(SIGTERM, OnTerminate);
+		if (CanTerminate())
+			Application::Get()->As<Runtime>()->Restate(ApplicationState_Terminated);
+	}
+	static bool OnLogWrite(FileLogger* Logger, const char* Buffer, int64_t Size)
+	{
+	    if (Size >= 31 && Buffer[28] == ' ')
+        {
+            if (Buffer[29] == 'I' || Buffer[29] == 'W' || Buffer[29] == 'E' || Buffer[29] == 'F' || Buffer[29] == 'D')
+            {
+	            int Offset = 30;
+	            while (Buffer[Offset] == ' ')
+	                Offset++;
+
+                THAWK_INFO("%.*s", (size_t)Size - Offset, Buffer + Offset);
+            }
+            else
+                THAWK_INFO("%.*s", (size_t)Size, Buffer);
+        }
+	    else
+            THAWK_INFO("%.*s", (size_t)Size, Buffer);
+
+		return true;
+	}
+};
+
+int main()
+{
+    Tomahawk::Initialize();
+    {
+        Application::Desc Interface = Application::Desc();
+        Interface.Threading = EventWorkflow_Singlethreaded;
+        Interface.Usage = ApplicationUse_Content_Module;
+
+        auto App = new Runtime(&Interface);
+        App->Run(&Interface);
+        delete App;
+    }
+    Tomahawk::Uninitialize();
+
+	return 0;
+}
