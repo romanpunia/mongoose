@@ -31,14 +31,14 @@ public:
     }
 	void Initialize(Application::Desc* In) override
 	{
-	    THAWK_INFO("preparing for initialization");
+	    TH_INFO("preparing for initialization");
         Content->SetEnvironment(OS::GetDirectory() + "mongodb");
 
-        THAWK_INFO("loading for ./mongodb/conf.xml");
+        TH_INFO("loading for ./mongodb/conf.xml");
         auto Reference = Content->Load<Document>("conf.xml", nullptr);
         if (!Reference)
         {
-            THAWK_ERROR("couldn't load ./mongodb/conf.xml (abort)");
+            TH_ERROR("couldn't load ./mongodb/conf.xml (abort)");
             return Restate(ApplicationState_Terminated);
         }
 
@@ -60,13 +60,13 @@ public:
 		{
 			Logs = SystemLog->String;
 			if (!Logs.empty())
-				THAWK_INFO("system logs at %s", Logs.c_str());
+				TH_INFO("system logs at %s", Logs.c_str());
 		}
 
 		NMake::Unpack(Reference->FindPath("application.path"), &Filename);
         if (!Filename.empty())
         {
-            THAWK_INFO("loading MongoDB config at %s", Filename.c_str());
+            TH_INFO("loading MongoDB config at %s", Filename.c_str());
 
             auto StreamF = new FileStream();
 			if (StreamF->Open(Filename.c_str(), FileMode_Binary_Write_Only))
@@ -80,7 +80,7 @@ public:
 			}
 
             delete StreamF;
-            THAWK_INFO("MongoDB system config was saved");
+            TH_INFO("MongoDB system config was saved");
         }
 
 		std::string Path;
@@ -91,10 +91,10 @@ public:
             Args.emplace_back("--config");
             Args.push_back(std::string("\"").append(Filename).append(1, '\"'));
 
-            THAWK_INFO("spawning MongoDB process from %s", Path.c_str());
+            TH_INFO("spawning MongoDB process from %s", Path.c_str());
             if (!OS::SpawnProcess(Path, Args, &Process))
             {
-                THAWK_ERROR("MongoDB process cannot be spawned for some reason");
+                TH_ERROR("MongoDB process cannot be spawned for some reason");
 				delete Reference;
                 return Restate(ApplicationState_Terminated);
             }
@@ -110,7 +110,7 @@ public:
 #ifdef PLATFORM_UNIX
 		signal(SIGPIPE, SIG_IGN);
 #endif
-        THAWK_INFO("initialization done");
+        TH_INFO("initialization done");
 		if (Terminal && !Logs.empty())
 		{
             Stream = new FileLogger(Logs);
@@ -223,13 +223,13 @@ public:
 	            while (Buffer[Offset] == ' ')
 	                Offset++;
 
-                THAWK_INFO("%.*s", (size_t)Size - Offset, Buffer + Offset);
+                TH_INFO("%.*s", (size_t)Size - Offset, Buffer + Offset);
             }
             else
-                THAWK_INFO("%.*s", (size_t)Size, Buffer);
+                TH_INFO("%.*s", (size_t)Size, Buffer);
         }
 	    else
-            THAWK_INFO("%.*s", (size_t)Size, Buffer);
+            TH_INFO("%.*s", (size_t)Size, Buffer);
 
 		return true;
 	}

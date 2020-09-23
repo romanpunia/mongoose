@@ -26,6 +26,7 @@ set_target_properties(mongodb PROPERTIES
 		CXX_STANDARD_REQUIRED 14
 		VERSION ${PROJECT_VERSION}
 		SOVERSION ${PROJECT_VERSION})
+target_compile_definitions(mongodb PRIVATE -DTH_EXPORT)
 
 #Project's compiler support for non-UNIX platforms
 include(lib/compiler/CMakeLists.txt)
