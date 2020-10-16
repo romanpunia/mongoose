@@ -25,8 +25,8 @@ public:
 	}
 	~Runtime() override
 	{
-		delete Stream;
-		delete Log;
+		TH_RELEASE(Stream);
+		TH_RELEASE(Log);
         OS::FreeProcess(&Process);
     }
 	void Initialize(Application::Desc* In) override
@@ -35,7 +35,7 @@ public:
         Content->SetEnvironment(OS::GetDirectory() + "mongodb");
 
         TH_INFO("loading for ./mongodb/conf.xml");
-        auto Reference = Content->Load<Document>("conf.xml", nullptr);
+        auto Reference = Content->Load<Document>("conf.xml");
         if (!Reference)
         {
             TH_ERROR("couldn't load ./mongodb/conf.xml (abort)");
@@ -53,7 +53,7 @@ public:
             Log->Show();
         }
         else
-            delete Log;
+			TH_CLEAR(Log);
 
 		Document* SystemLog = Reference->FindPath("database.systemLog.path.[v]");
 		if (SystemLog != nullptr)
@@ -79,7 +79,7 @@ public:
 				}
 			}
 
-            delete StreamF;
+			TH_RELEASE(StreamF);
             TH_INFO("MongoDB system config was saved");
         }
 
@@ -95,12 +95,12 @@ public:
             if (!OS::SpawnProcess(Path, Args, &Process))
             {
                 TH_ERROR("MongoDB process cannot be spawned for some reason");
-				delete Reference;
+				TH_RELEASE(Reference);
                 return Restate(ApplicationState_Terminated);
             }
         }
 
-		delete Reference;
+		TH_RELEASE(Reference);
 		signal(SIGABRT, OnAbort);
 		signal(SIGFPE, OnArithmeticError);
 		signal(SIGILL, OnIllegalOperation);
@@ -245,7 +245,7 @@ int main()
 
         auto App = new Runtime(&Interface);
         App->Run(&Interface);
-        delete App;
+		TH_RELEASE(App);
     }
     Tomahawk::Uninitialize();
 
