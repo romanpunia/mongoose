@@ -12,7 +12,7 @@ using namespace Tomahawk::Script;
 class Runtime : public Application
 {
 public:
-	FileLogger* Stream = nullptr;
+	ChangeLog* Stream = nullptr;
     Console* Log = nullptr;
     ChildProcess Process;
     std::string Filename;
@@ -113,7 +113,7 @@ public:
         TH_INFO("initialization done");
 		if (Terminal && !Logs.empty())
 		{
-            Stream = new FileLogger(Logs);
+            Stream = new ChangeLog(Logs);
             Stream->Process(Runtime::OnLogWrite);
 		}
 	}
@@ -213,7 +213,7 @@ public:
 		if (CanTerminate())
 			Application::Get()->As<Runtime>()->Restate(ApplicationState_Terminated);
 	}
-	static bool OnLogWrite(FileLogger* Logger, const char* Buffer, int64_t Size)
+	static bool OnLogWrite(ChangeLog* Logger, const char* Buffer, int64_t Size)
 	{
 	    if (Size >= 31 && Buffer[28] == ' ')
         {
