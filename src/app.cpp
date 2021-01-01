@@ -39,7 +39,7 @@ public:
         if (!Reference)
         {
             TH_ERROR("couldn't load ./mongodb/conf.xml (abort)");
-            return Restate(ApplicationState_Terminated);
+            return Stop();
         }
 
         std::string N = Socket::LocalIpAddress();
@@ -96,7 +96,7 @@ public:
             {
                 TH_ERROR("MongoDB process cannot be spawned for some reason");
 				TH_RELEASE(Reference);
-                return Restate(ApplicationState_Terminated);
+                return Stop();
             }
         }
 
@@ -115,11 +115,11 @@ public:
 		{
             Stream = new ChangeLog(Logs);
             Stream->Process(Runtime::OnLogWrite);
+			Enqueue<Runtime, &Runtime::Update>(6.0);
 		}
 	}
-	void Update(Timer* Time) override
+	void Update(Timer* Time)
 	{
-		Time->FrameLimit = 6;
 		if (Log && Stream != nullptr)
             Stream->Process(Runtime::OnLogWrite);
 	}
@@ -181,37 +181,37 @@ public:
 	{
 		signal(SIGABRT, OnAbort);
 		if (CanTerminate())
-			Application::Get()->As<Runtime>()->Restate(ApplicationState_Terminated);
+			Application::Get()->Stop();
 	}
 	static void OnArithmeticError(int Value)
 	{
 		signal(SIGFPE, OnArithmeticError);
 		if (CanTerminate())
-			Application::Get()->As<Runtime>()->Restate(ApplicationState_Terminated);
+			Application::Get()->Stop();
 	}
 	static void OnIllegalOperation(int Value)
 	{
 		signal(SIGILL, OnIllegalOperation);
 		if (CanTerminate())
-			Application::Get()->As<Runtime>()->Restate(ApplicationState_Terminated);
+			Application::Get()->Stop();
 	}
 	static void OnCtrl(int Value)
 	{
 		signal(SIGINT, OnCtrl);
 		if (CanTerminate())
-			Application::Get()->As<Runtime>()->Restate(ApplicationState_Terminated);
+			Application::Get()->Stop();
 	}
 	static void OnInvalidAccess(int Value)
 	{
 		signal(SIGSEGV, OnInvalidAccess);
 		if (CanTerminate())
-			Application::Get()->As<Runtime>()->Restate(ApplicationState_Terminated);
+			Application::Get()->Stop();
 	}
 	static void OnTerminate(int Value)
 	{
 		signal(SIGTERM, OnTerminate);
 		if (CanTerminate())
-			Application::Get()->As<Runtime>()->Restate(ApplicationState_Terminated);
+			Application::Get()->Stop();
 	}
 	static bool OnLogWrite(ChangeLog* Logger, const char* Buffer, int64_t Size)
 	{
@@ -242,9 +242,10 @@ int main()
         Application::Desc Interface = Application::Desc();
         Interface.Threading = EventWorkflow_Singlethreaded;
         Interface.Usage = ApplicationUse_Content_Module;
+		Interface.FrameLimit = 6.0;
 
         auto App = new Runtime(&Interface);
-        App->Run(&Interface);
+        App->Start(&Interface);
 		TH_RELEASE(App);
     }
     Tomahawk::Uninitialize();
