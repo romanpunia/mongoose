@@ -46,7 +46,7 @@ public:
         std::string D = Content->GetEnvironment();
 		ProcessNode(Reference, N, D);
 
-		NMake::Unpack(Reference->FindPath("application.terminal"), &Terminal);
+		NMake::Unpack(Reference->Fetch("application.terminal"), &Terminal);
         if (Terminal)
         {
             Log = Console::Get();
@@ -55,15 +55,15 @@ public:
         else
 			TH_CLEAR(Log);
 
-		Document* SystemLog = Reference->FindPath("database.systemLog.path.[v]");
+		Document* SystemLog = Reference->Fetch("database.systemLog.path.[v]");
 		if (SystemLog != nullptr)
 		{
-			Logs = SystemLog->String;
+			Logs = SystemLog->Value.Serialize();
 			if (!Logs.empty())
 				TH_INFO("system logs at %s", Logs.c_str());
 		}
 
-		NMake::Unpack(Reference->FindPath("application.path"), &Filename);
+		NMake::Unpack(Reference->Fetch("application.path"), &Filename);
         if (!Filename.empty())
         {
             TH_INFO("loading MongoDB config at %s", Filename.c_str());
@@ -71,7 +71,7 @@ public:
             auto StreamF = new FileStream();
 			if (StreamF->Open(Filename.c_str(), FileMode_Binary_Write_Only))
 			{
-				std::string Tab; Document* Config = Reference->Find("database", true);
+				std::string Tab; Document* Config = Reference->Find("database");
 				if (Config != nullptr)
 				{
 					for (auto It = Config->GetNodes()->begin(); It < Config->GetNodes()->end(); It++)
@@ -84,7 +84,7 @@ public:
         }
 
 		std::string Path;
-		NMake::Unpack(Reference->FindPath("application.executable"), &Path);
+		NMake::Unpack(Reference->Fetch("application.executable"), &Path);
         if (!Path.empty())
         {
             std::vector<std::string> Args;
@@ -139,14 +139,14 @@ public:
 	}
     static bool ProcessYaml(Document* Document, FileStream* Stream, std::string& Tab)
     {
-        if (!Document || Document->Name.empty())
+        if (!Document || Document->Key.empty())
             return false;
 
-        ::Document* Value = Document->Find("[v]", true);
+        ::Document* Value = Document->Find("[v]");
         if (Document->GetNodes()->empty() && !Value)
             return false;
 
-        Stream->Write((Tab + Document->Name).c_str(), Document->Name.size() + Tab.size());
+        Stream->Write((Tab + Document->Key).c_str(), Document->Key.size() + Tab.size());
         Stream->Write(":", 1);
 
 		if ((int)Document->GetNodes()->size() - (Value ? 1 : 0) > 0)
@@ -161,7 +161,7 @@ public:
         }
 		else if (Value)
 		{
-			std::string V = Value->Serialize();
+			std::string V = Value->Value.Serialize();
 			Stream->Write((" " + V).c_str(), V.size() + 1);
 			Stream->Write("\n", 1);
 		}
@@ -172,7 +172,7 @@ public:
 	{
 		if (Value != nullptr)
 		{
-			Stroke(&Value->String).Path(N, D);
+			Value->Value = Var::Auto(Stroke(Value->Value.Serialize()).Path(N, D).R());
 			for (auto& It : *Value->GetNodes())
 				ProcessNode(It, N, D);
 		}
