@@ -237,7 +237,7 @@ public:
 
 int main()
 {
-    Tomahawk::Initialize();
+    Tomahawk::Initialize(Tomahawk::TPreset_App, Tomahawk::TMem_Heap);
     {
         Application::Desc Interface = Application::Desc();
         Interface.Threading = EventWorkflow_Singlethreaded;
