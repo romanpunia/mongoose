@@ -27,13 +27,10 @@ public:
 	{
 		TH_RELEASE(Stream);
 		TH_RELEASE(Log);
-        OS::FreeProcess(&Process);
+        OS::Process::Free(&Process);
     }
 	void Initialize(Application::Desc* In) override
 	{
-	    TH_INFO("preparing for initialization");
-        Content->SetEnvironment(OS::GetDirectory() + "mongodb");
-
         TH_INFO("loading for ./mongodb/conf.xml");
         auto Reference = Content->Load<Document>("conf.xml");
         if (!Reference)
@@ -92,7 +89,7 @@ public:
             Args.push_back(std::string("\"").append(Filename).append(1, '\"'));
 
             TH_INFO("spawning MongoDB process from %s", Path.c_str());
-            if (!OS::SpawnProcess(Path, Args, &Process))
+            if (!OS::Process::Spawn(Path, Args, &Process))
             {
                 TH_ERROR("MongoDB process cannot be spawned for some reason");
 				TH_RELEASE(Reference);
@@ -243,6 +240,7 @@ int main()
         Interface.Threading = EventWorkflow_Singlethreaded;
         Interface.Usage = ApplicationUse_Content_Module;
 		Interface.FrameLimit = 6.0;
+		Interface.Directory = "mongodb";
 
         auto App = new Runtime(&Interface);
         App->Start(&Interface);
