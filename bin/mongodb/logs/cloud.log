@@ -1,0 +1,59 @@
+2020-02-21T15:14:38.517+0300 I  CONTROL  [main] Automatically disabling TLS 1.0, to force-enable TLS 1.0 specify --sslDisabledProtocols 'none'
+2020-02-21T15:14:45.452+0300 I  CONTROL  [initandlisten] MongoDB starting : pid=13684 port=27017 dbpath=E:\dev\bin\alicanto\storage\ 64-bit host=A77
+2020-02-21T15:14:45.453+0300 I  CONTROL  [initandlisten] targetMinOS: Windows 7/Windows Server 2008 R2
+2020-02-21T15:14:45.453+0300 I  CONTROL  [initandlisten] db version v4.2.1
+2020-02-21T15:14:45.453+0300 I  CONTROL  [initandlisten] git version: edf6d45851c0b9ee15548f0f847df141764a317e
+2020-02-21T15:14:45.453+0300 I  CONTROL  [initandlisten] allocator: tcmalloc
+2020-02-21T15:14:45.453+0300 I  CONTROL  [initandlisten] modules: none
+2020-02-21T15:14:45.454+0300 I  CONTROL  [initandlisten] build environment:
+2020-02-21T15:14:45.455+0300 I  CONTROL  [initandlisten]     distmod: 2012plus
+2020-02-21T15:14:45.455+0300 I  CONTROL  [initandlisten]     distarch: x86_64
+2020-02-21T15:14:45.455+0300 I  CONTROL  [initandlisten]     target_arch: x86_64
+2020-02-21T15:14:45.455+0300 I  CONTROL  [initandlisten] options: { config: "E:\dev\bin\alicanto\meta\mongod.yml", net: { bindIp: "127.0.0.1", port: 27017 }, processManagement: { pidFilePath: "E:\dev\bin\alicanto\logs\thread.pid", timeZoneInfo: "E:\dev\bin\alicanto\time\" }, security: { authorization: "enabled" }, storage: { dbPath: "E:\dev\bin\alicanto\storage\", journal: { enabled: true } }, systemLog: { destination: "file", logAppend: true, path: "E:\dev\bin\alicanto\logs\cloud.log" } }
+2020-02-21T15:14:45.518+0300 I  STORAGE  [initandlisten] Detected data files in E:\dev\bin\alicanto\storage\ created by the 'wiredTiger' storage engine, so setting the active storage engine to 'wiredTiger'.
+2020-02-21T15:14:45.518+0300 I  STORAGE  [initandlisten] wiredtiger_open config: create,cache_size=5627M,cache_overflow=(file_max=0M),session_max=33000,eviction=(threads_min=4,threads_max=4),config_base=false,statistics=(fast),log=(enabled=true,archive=true,path=journal,compressor=snappy),file_manager=(close_idle_time=100000,close_scan_interval=10,close_handle_minimum=250),statistics_log=(wait=0),verbose=[recovery_progress,checkpoint_progress],
+2020-02-21T15:14:45.729+0300 I  STORAGE  [initandlisten] WiredTiger message [1582287285:728955][13684:140714824514640], txn-recover: Recovering log 1397 through 1398
+2020-02-21T15:14:49.772+0300 I  STORAGE  [initandlisten] WiredTiger message [1582287289:771890][13684:140714824514640], txn-recover: Recovering log 1398 through 1398
+2020-02-21T15:14:49.924+0300 I  STORAGE  [initandlisten] WiredTiger message [1582287289:923878][13684:140714824514640], txn-recover: Main recovery loop: starting at 1397/2048 to 1398/256
+2020-02-21T15:14:50.159+0300 I  STORAGE  [initandlisten] WiredTiger message [1582287290:158875][13684:140714824514640], txn-recover: Recovering log 1397 through 1398
+2020-02-21T15:14:50.317+0300 I  STORAGE  [initandlisten] WiredTiger message [1582287290:316877][13684:140714824514640], txn-recover: Recovering log 1398 through 1398
+2020-02-21T15:14:50.471+0300 I  STORAGE  [initandlisten] WiredTiger message [1582287290:470873][13684:140714824514640], txn-recover: Set global recovery timestamp: (0,0)
+2020-02-21T15:14:50.589+0300 I  RECOVERY [initandlisten] WiredTiger recoveryTimestamp. Ts: Timestamp(0, 0)
+2020-02-21T15:14:50.850+0300 I  STORAGE  [initandlisten] Timestamp monitor starting
+2020-02-21T15:14:51.074+0300 I  SHARDING [initandlisten] Marking collection local.system.replset as collection version: <unsharded>
+2020-02-21T15:14:51.131+0300 I  STORAGE  [initandlisten] Flow Control is enabled on this deployment.
+2020-02-21T15:14:51.167+0300 I  SHARDING [initandlisten] Marking collection admin.system.roles as collection version: <unsharded>
+2020-02-21T15:14:51.176+0300 I  SHARDING [initandlisten] Marking collection admin.system.version as collection version: <unsharded>
+2020-02-21T15:14:51.294+0300 I  SHARDING [initandlisten] Marking collection local.startup_log as collection version: <unsharded>
+2020-02-21T15:14:52.287+0300 W  FTDC     [initandlisten] Failed to initialize Performance Counters for FTDC: WindowsPdhError: PdhExpandCounterPathW failed with 'Указанные объекты не найдены на этом компьютере.' for counter '\Memory\Available Bytes'
+2020-02-21T15:14:52.288+0300 I  FTDC     [initandlisten] Initializing full-time diagnostic data capture with directory 'E:/dev/bin/alicanto/storage/diagnostic.data'
+2020-02-21T15:14:52.292+0300 I  SHARDING [LogicalSessionCacheReap] Marking collection config.system.sessions as collection version: <unsharded>
+2020-02-21T15:14:52.292+0300 I  NETWORK  [initandlisten] Listening on 127.0.0.1
+2020-02-21T15:14:52.293+0300 I  NETWORK  [initandlisten] waiting for connections on port 27017
+2020-02-21T15:14:52.344+0300 I  SHARDING [LogicalSessionCacheReap] Marking collection config.transactions as collection version: <unsharded>
+2020-02-21T15:14:53.088+0300 I  SHARDING [ftdc] Marking collection local.oplog.rs as collection version: <unsharded>
+2020-02-21T15:15:18.991+0300 I  CONTROL  [thread1] Ctrl-C signal
+2020-02-21T15:15:18.991+0300 I  CONTROL  [consoleTerminate] got CTRL_C_EVENT, will terminate after current cmd ends
+2020-02-21T15:15:19.116+0300 I  NETWORK  [consoleTerminate] shutdown: going to close listening sockets...
+2020-02-21T15:15:19.117+0300 I  -        [consoleTerminate] Stopping further Flow Control ticket acquisitions.
+2020-02-21T15:15:19.121+0300 I  CONTROL  [consoleTerminate] Shutting down free monitoring
+2020-02-21T15:15:19.121+0300 I  FTDC     [consoleTerminate] Shutting down full-time diagnostic data capture
+2020-02-21T15:15:19.139+0300 I  STORAGE  [consoleTerminate] Deregistering all the collections
+2020-02-21T15:15:19.140+0300 I  STORAGE  [consoleTerminate] Timestamp monitor shutting down
+2020-02-21T15:15:19.140+0300 I  STORAGE  [consoleTerminate] WiredTigerKVEngine shutting down
+2020-02-21T15:15:19.142+0300 I  STORAGE  [consoleTerminate] Shutting down session sweeper thread
+2020-02-21T15:15:19.142+0300 I  STORAGE  [consoleTerminate] Finished shutting down session sweeper thread
+2020-02-21T15:15:19.142+0300 I  STORAGE  [consoleTerminate] Shutting down journal flusher thread
+2020-02-21T15:15:19.200+0300 I  STORAGE  [consoleTerminate] Finished shutting down journal flusher thread
+2020-02-21T15:15:19.200+0300 I  STORAGE  [consoleTerminate] Shutting down checkpoint thread
+2020-02-21T15:15:19.200+0300 I  STORAGE  [consoleTerminate] Finished shutting down checkpoint thread
+2020-02-21T15:15:19.200+0300 I  STORAGE  [consoleTerminate] Downgrading WiredTiger datafiles.
+2020-02-21T15:15:19.495+0300 I  STORAGE  [consoleTerminate] WiredTiger message [1582287319:494888][13684:140714824514640], txn-recover: Recovering log 1398 through 1399
+2020-02-21T15:15:19.650+0300 I  STORAGE  [consoleTerminate] WiredTiger message [1582287319:649887][13684:140714824514640], txn-recover: Recovering log 1399 through 1399
+2020-02-21T15:15:19.810+0300 I  STORAGE  [consoleTerminate] WiredTiger message [1582287319:809884][13684:140714824514640], txn-recover: Main recovery loop: starting at 1398/4992 to 1399/256
+2020-02-21T15:15:20.050+0300 I  STORAGE  [consoleTerminate] WiredTiger message [1582287320:49881][13684:140714824514640], txn-recover: Recovering log 1398 through 1399
+2020-02-21T15:15:20.208+0300 I  STORAGE  [consoleTerminate] WiredTiger message [1582287320:208877][13684:140714824514640], txn-recover: Recovering log 1399 through 1399
+2020-02-21T15:15:20.308+0300 I  STORAGE  [consoleTerminate] WiredTiger message [1582287320:307882][13684:140714824514640], txn-recover: Set global recovery timestamp: (0,0)
+2020-02-21T15:15:20.433+0300 I  STORAGE  [consoleTerminate] shutdown: removing fs lock...
+2020-02-21T15:15:20.435+0300 I  CONTROL  [consoleTerminate] now exiting
+2020-02-21T15:15:20.436+0300 I  CONTROL  [consoleTerminate] shutting down with code:12

@@ -31,11 +31,11 @@ public:
     }
 	void Initialize(Application::Desc* In) override
 	{
-        TH_INFO("loading for ./mongodb/conf.xml");
+        TH_INFO("loading for ./data/conf.xml");
         auto Reference = Content->Load<Document>("conf.xml");
         if (!Reference)
         {
-            TH_ERROR("couldn't load ./mongodb/conf.xml (abort)");
+            TH_ERROR("couldn't load ./data/conf.xml (abort)");
             return Stop();
         }
 
@@ -240,7 +240,7 @@ int main()
         Interface.Threading = EventWorkflow_Singlethreaded;
         Interface.Usage = ApplicationUse_Content_Module;
 		Interface.FrameLimit = 6.0;
-		Interface.Directory = "mongodb";
+		Interface.Directory = "data";
 
         auto App = new Runtime(&Interface);
         App->Start(&Interface);

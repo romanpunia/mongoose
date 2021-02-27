@@ -8,7 +8,7 @@ bin/*.pdb
 bin/*.exe
 bin/*.ilk
 bin/*.exp
-bin/mongodb/logs/*.log
-bin/mongodb/logs/*.pid
-bin/mongodb/meta/*.yml
-bin/mongodb/storage
+bin/data/logs/*.log
+bin/data/logs/*.pid
+bin/data/meta/*.yml
+bin/data/storage

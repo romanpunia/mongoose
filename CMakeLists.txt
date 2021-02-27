@@ -5,7 +5,7 @@ cmake_policy(SET CMP0054 NEW)
 include(lib/package/CMakeLists.txt)
 
 #Project's metadata
-project(mongodb)
+project(mongoose)
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release")
 
@@ -20,13 +20,13 @@ endif()
 include(lib/source/CMakeLists.txt)
 
 #Project's compile options
-add_executable(mongodb ${SOURCE})
-set_target_properties(mongodb PROPERTIES
-		OUTPUT_NAME "mongod"
+add_executable(mongoose ${SOURCE})
+set_target_properties(mongoose PROPERTIES
+		OUTPUT_NAME "mongoosed"
 		CXX_STANDARD_REQUIRED 14
 		VERSION ${PROJECT_VERSION}
 		SOVERSION ${PROJECT_VERSION})
-target_compile_definitions(mongodb PRIVATE -DTH_EXPORT)
+target_compile_definitions(mongoose PRIVATE -DTH_EXPORT)
 
 #Project's compiler support for non-UNIX platforms
 include(lib/compiler/CMakeLists.txt)
