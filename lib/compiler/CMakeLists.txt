@@ -23,10 +23,10 @@ else()
     set(CMAKE_CXX_FLAGS_RELEASE "/MD /O2 /Ob2 /DNDEBUG")
     set(CMAKE_C_FLAGS_DEBUG "/MDd /Zi /Ob0 /Od")
     set(CMAKE_C_FLAGS_RELEASE "/MD /O2 /Ob2 /DNDEBUG")
-    target_compile_definitions(mongodb PRIVATE
+    target_compile_definitions(mongoose PRIVATE
             -D_CRT_SECURE_NO_WARNINGS
             -D_SCL_SECURE_NO_WARNINGS)
-    target_compile_options(mongodb PRIVATE
+    target_compile_options(mongoose PRIVATE
             /wd4305
             /wd4244)
 endif()

@@ -237,10 +237,10 @@ int main()
     Tomahawk::Initialize(Tomahawk::TPreset_App, Tomahawk::TMem_Heap);
     {
         Application::Desc Interface = Application::Desc();
-        Interface.Threading = EventWorkflow_Singlethreaded;
         Interface.Usage = ApplicationUse_Content_Module;
-		Interface.FrameLimit = 6.0;
 		Interface.Directory = "data";
+		Interface.Framerate = 6.0;
+		Interface.Async = true;
 
         auto App = new Runtime(&Interface);
         App->Start(&Interface);
