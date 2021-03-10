@@ -1,7 +1,7 @@
 ﻿#include <tomahawk/tomahawk.h>
 #include <csignal>
 
-using namespace Tomahawk::Rest;
+using namespace Tomahawk::Core;
 using namespace Tomahawk::Audio;
 using namespace Tomahawk::Compute;
 using namespace Tomahawk::Engine;
@@ -169,7 +169,7 @@ public:
 	{
 		if (Value != nullptr)
 		{
-			Value->Value = Var::Auto(Stroke(Value->Value.Serialize()).Path(N, D).R());
+			Value->Value = Var::Auto(Parser(Value->Value.Serialize()).Path(N, D).R());
 			for (auto& It : *Value->GetNodes())
 				ProcessNode(It, N, D);
 		}
