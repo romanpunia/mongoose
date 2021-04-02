@@ -25,8 +25,8 @@ public:
 	}
 	~Runtime() override
 	{
-		TH_RELEASE(Stream);
-		TH_RELEASE(Log);
+		delete Stream;
+		delete Log;
         OS::Process::Free(&Process);
     }
 	void Initialize(Application::Desc* In) override
@@ -76,7 +76,7 @@ public:
 				}
 			}
 
-			TH_RELEASE(StreamF);
+			delete StreamF;
             TH_INFO("MongoDB system config was saved");
         }
 
@@ -92,12 +92,12 @@ public:
             if (!OS::Process::Spawn(Path, Args, &Process))
             {
                 TH_ERROR("MongoDB process cannot be spawned for some reason");
-				TH_RELEASE(Reference);
+				delete Reference;
                 return Stop();
             }
         }
 
-		TH_RELEASE(Reference);
+		delete Reference;
 		signal(SIGABRT, OnAbort);
 		signal(SIGFPE, OnArithmeticError);
 		signal(SIGILL, OnIllegalOperation);
@@ -244,7 +244,7 @@ int main()
 
         auto App = new Runtime(&Interface);
         App->Start(&Interface);
-		TH_RELEASE(App);
+		delete App;
     }
     Tomahawk::Uninitialize();
 
