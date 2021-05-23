@@ -234,7 +234,7 @@ public:
 
 int main()
 {
-    Tomahawk::Initialize(Tomahawk::TPreset_App, Tomahawk::TMem_Heap);
+    Tomahawk::Initialize(Tomahawk::TPreset_App);
     {
         Application::Desc Interface = Application::Desc();
         Interface.Usage = ApplicationUse_Content_Module;
