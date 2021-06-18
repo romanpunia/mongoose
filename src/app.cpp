@@ -66,7 +66,7 @@ public:
             TH_INFO("loading MongoDB config at %s", Filename.c_str());
 
             auto StreamF = new FileStream();
-			if (StreamF->Open(Filename.c_str(), FileMode_Binary_Write_Only))
+			if (StreamF->Open(Filename.c_str(), FileMode::Binary_Write_Only))
 			{
 				std::string Tab; Document* Config = Reference->Find("database");
 				if (Config != nullptr)
@@ -234,10 +234,10 @@ public:
 
 int main()
 {
-    Tomahawk::Initialize(Tomahawk::TPreset_App);
+    Tomahawk::Initialize((uint64_t)Tomahawk::Preset::App);
     {
         Application::Desc Interface = Application::Desc();
-        Interface.Usage = ApplicationUse_Content_Module;
+        Interface.Usage = (size_t)ApplicationUse::Content_Module;
 		Interface.Directory = "data";
 		Interface.Framerate = 6.0;
 		Interface.Async = true;
