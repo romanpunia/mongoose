@@ -1,4 +1,4 @@
-﻿#include <tomahawk/tomahawk.h>
+#include <tomahawk/tomahawk.h>
 #include <csignal>
 
 using namespace Tomahawk::Core;
@@ -237,7 +237,7 @@ int main()
     Tomahawk::Initialize((uint64_t)Tomahawk::Preset::App);
     {
         Application::Desc Interface = Application::Desc();
-        Interface.Usage = (size_t)ApplicationUse::Content_Module;
+        Interface.Usage = (size_t)ApplicationSet::ContentSet;
 		Interface.Directory = "data";
 		Interface.Framerate = 6.0;
 		Interface.Async = true;
