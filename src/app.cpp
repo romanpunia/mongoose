@@ -71,8 +71,8 @@ public:
 				std::string Tab; Document* Config = Reference->Find("database");
 				if (Config != nullptr)
 				{
-					for (auto It = Config->GetNodes()->begin(); It < Config->GetNodes()->end(); It++)
-						ProcessYaml(*It, StreamF, Tab);
+					for (auto* Item : Config->GetChilds())
+						ProcessYaml(Item, StreamF, Tab);
 				}
 			}
 
@@ -112,10 +112,9 @@ public:
 		{
             Stream = new ChangeLog(Logs);
             Stream->Process(Runtime::OnLogWrite);
-			Enqueue<Runtime, &Runtime::Update>(6.0);
 		}
 	}
-	void Update(Timer* Time)
+	void Publish(Timer* Time) override
 	{
 		if (Log && Stream != nullptr)
             Stream->Process(Runtime::OnLogWrite);
@@ -140,19 +139,19 @@ public:
             return false;
 
         ::Document* Value = Document->Find("[v]");
-        if (Document->GetNodes()->empty() && !Value)
+        if (Document->IsEmpty() && !Value)
             return false;
 
         Stream->Write((Tab + Document->Key).c_str(), Document->Key.size() + Tab.size());
         Stream->Write(":", 1);
 
-		if ((int)Document->GetNodes()->size() - (Value ? 1 : 0) > 0)
+		if ((int)Document->Size() - (Value ? 1 : 0) > 0)
         {
             Tab.append("  ");
             Stream->Write("\n", 1);
 
-            for (auto It = Document->GetNodes()->begin(); It < Document->GetNodes()->end(); It++)
-				ProcessYaml(*It, Stream, Tab);
+            for (auto* Item : Document->GetChilds())
+				ProcessYaml(Item, Stream, Tab);
 
             Tab = Tab.substr(0, Tab.size() - 2);
         }
@@ -170,8 +169,8 @@ public:
 		if (Value != nullptr)
 		{
 			Value->Value = Var::Auto(Parser(Value->Value.Serialize()).Path(N, D).R());
-			for (auto& It : *Value->GetNodes())
-				ProcessNode(It, N, D);
+			for (auto* Item : Value->GetChilds())
+				ProcessNode(Item, N, D);
 		}
 	}
 	static void OnAbort(int Value)
