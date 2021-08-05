@@ -35,7 +35,7 @@ public:
         auto Reference = Content->Load<Document>("conf.xml");
         if (!Reference)
         {
-            TH_ERROR("couldn't load ./data/conf.xml (abort)");
+            TH_ERR("couldn't load ./data/conf.xml (abort)");
             return Stop();
         }
 
@@ -91,7 +91,7 @@ public:
             TH_INFO("spawning MongoDB process from %s", Path.c_str());
             if (!OS::Process::Spawn(Path, Args, &Process))
             {
-                TH_ERROR("MongoDB process cannot be spawned for some reason");
+                TH_ERR("MongoDB process cannot be spawned for some reason");
 				delete Reference;
                 return Stop();
             }
@@ -241,9 +241,9 @@ int main()
 		Interface.Framerate = 6.0;
 		Interface.Async = true;
 
-        auto App = new Runtime(&Interface);
+        auto* App = new Runtime(&Interface);
         App->Start(&Interface);
-		delete App;
+		TH_RELEASE(App);
     }
     Tomahawk::Uninitialize();
 
