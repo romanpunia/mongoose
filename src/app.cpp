@@ -29,7 +29,7 @@ public:
 		delete Log;
         OS::Process::Free(&Process);
     }
-	void Initialize(Application::Desc* In) override
+	void Initialize() override
 	{
         TH_INFO("loading for ./data/conf.xml");
         auto Reference = Content->Load<Document>("conf.xml");
@@ -242,7 +242,7 @@ int main()
 		Interface.Async = true;
 
         auto* App = new Runtime(&Interface);
-        App->Start(&Interface);
+        App->Start();
 		TH_RELEASE(App);
     }
     Tomahawk::Uninitialize();
