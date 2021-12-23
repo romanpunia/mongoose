@@ -31,11 +31,11 @@ public:
     }
 	void Initialize() override
 	{
-        TH_INFO("loading for ./data/conf.xml");
-        auto Reference = Content->Load<Document>("conf.xml");
+        TH_INFO("loading for ./config.xml");
+        auto Reference = Content->Load<Document>("config.xml");
         if (!Reference)
         {
-            TH_ERR("couldn't load ./data/conf.xml (abort)");
+            TH_ERR("couldn't load ./config.xml (abort)");
             return Stop();
         }
 
@@ -168,7 +168,7 @@ public:
 	{
 		if (Value != nullptr)
 		{
-			Value->Value = Var::Auto(Parser(Value->Value.Serialize()).Path(N, D).R());
+			Value->Value = Var::Auto(Parser(Value->Value.Serialize()).Eval(N, D).R());
 			for (auto* Item : Value->GetChilds())
 				ProcessNode(Item, N, D);
 		}
@@ -237,7 +237,7 @@ int main()
     {
         Application::Desc Interface = Application::Desc();
         Interface.Usage = (size_t)ApplicationSet::ContentSet;
-		Interface.Directory = "data";
+		Interface.Directory.clear();
 		Interface.Framerate = 6.0;
 		Interface.Async = true;
 
