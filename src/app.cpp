@@ -39,7 +39,7 @@ public:
             return Stop();
         }
 
-        std::string N = Socket::LocalIpAddress();
+        std::string N = Socket::GetLocalAddress();
         std::string D = Content->GetEnvironment();
 		ProcessNode(Reference, N, D);
 
