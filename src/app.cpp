@@ -32,7 +32,7 @@ public:
 	void Initialize() override
 	{
         TH_INFO("loading for ./config.xml");
-        auto Reference = Content->Load<Document>("config.xml");
+        auto Reference = Content->Load<Schema>("config.xml");
         if (!Reference)
         {
             TH_ERR("couldn't load ./config.xml (abort)");
@@ -52,7 +52,7 @@ public:
         else
 			TH_CLEAR(Log);
 
-		Document* SystemLog = Reference->Fetch("database.systemLog.path.[v]");
+		Schema* SystemLog = Reference->Fetch("database.systemLog.path.[v]");
 		if (SystemLog != nullptr)
 		{
 			Logs = SystemLog->Value.Serialize();
@@ -68,7 +68,7 @@ public:
             auto StreamF = new FileStream();
 			if (StreamF->Open(Filename.c_str(), FileMode::Binary_Write_Only))
 			{
-				std::string Tab; Document* Config = Reference->Find("database");
+				std::string Tab; Schema* Config = Reference->Find("database");
 				if (Config != nullptr)
 				{
 					for (auto* Item : Config->GetChilds())
@@ -133,24 +133,24 @@ public:
 
 		return Value;
 	}
-    static bool ProcessYaml(Document* Document, FileStream* Stream, std::string& Tab)
+    static bool ProcessYaml(Schema* Schema, FileStream* Stream, std::string& Tab)
     {
-        if (!Document || Document->Key.empty())
+        if (!Schema || Schema->Key.empty())
             return false;
 
-        ::Document* Value = Document->Find("[v]");
-        if (Document->IsEmpty() && !Value)
+        ::Schema* Value = Schema->Find("[v]");
+        if (Schema->IsEmpty() && !Value)
             return false;
 
-        Stream->Write((Tab + Document->Key).c_str(), Document->Key.size() + Tab.size());
+        Stream->Write((Tab + Schema->Key).c_str(), Schema->Key.size() + Tab.size());
         Stream->Write(":", 1);
 
-		if ((int)Document->Size() - (Value ? 1 : 0) > 0)
+		if ((int)Schema->Size() - (Value ? 1 : 0) > 0)
         {
             Tab.append("  ");
             Stream->Write("\n", 1);
 
-            for (auto* Item : Document->GetChilds())
+            for (auto* Item : Schema->GetChilds())
 				ProcessYaml(Item, Stream, Tab);
 
             Tab = Tab.substr(0, Tab.size() - 2);
@@ -164,7 +164,7 @@ public:
 
         return true;
     }
-	static void ProcessNode(Document* Value, const std::string& N, const std::string& D)
+	static void ProcessNode(Schema* Value, const std::string& N, const std::string& D)
 	{
 		if (Value != nullptr)
 		{
