@@ -233,19 +233,15 @@ public:
 
 int main()
 {
-    Tomahawk::Initialize((uint64_t)Tomahawk::Preset::App);
-    {
-        Application::Desc Interface = Application::Desc();
-        Interface.Usage = (size_t)ApplicationSet::ContentSet;
-		Interface.Directory.clear();
-		Interface.Framerate = 6.0;
-		Interface.Async = true;
+    Application::Desc Init = Application::Desc();
+    Init.Usage = (size_t)ApplicationSet::ContentSet;
+    Init.Directory.clear();
+    Init.Framerate = 6.0;
+    Init.Async = true;
 
-        auto* App = new Runtime(&Interface);
-        App->Start();
-		TH_RELEASE(App);
-    }
+    Tomahawk::Initialize((uint64_t)Tomahawk::Preset::App);
+    int ExitCode = Application::StartApp<Runtime>(&Init);
     Tomahawk::Uninitialize();
 
-	return 0;
+	return ExitCode;
 }
